@@ -1,0 +1,23 @@
+classdef Antenna
+   properties
+      Fitness {mustBeNumeric}
+      % DNA:
+      % 1) Distance between elements.
+      % 2) Amplitude of signals
+      % 3) Phase shift of signals
+      distance 
+   end
+   methods
+      % constructor
+      function obj = Antenna(val, d, st)
+        if nargin == 3 % Number of function input arguments
+            obj.Fitness = val;
+            obj.distance = no;
+            obj.name = st;
+        end % end if
+      end % end constructor
+      
+      
+      
+   end % end methods
+end
