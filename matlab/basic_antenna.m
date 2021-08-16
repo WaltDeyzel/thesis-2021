@@ -8,7 +8,9 @@ rb.Element = [dp,dp,dp,dp,dp,dp];
 %rb.NumElements = 4; antennaDesigner
 rb.ElementSpacing = 0.5;
 t = tiledlayout(3,6);
+
 for q = -10:9
+  
     disp('start')
     disp(q)
     d = 0.5;            % uniform seperation.
@@ -24,23 +26,33 @@ for q = -10:9
     Adb_180 = Adb(181:361)';
 
     fit = zeros(180,1);
+    scores = zeros(20,1);
     fitt = 0;
-    target = 30;
+    target = 90;
+   
     for i = 1:180
         M = 10^(Adb_180(i)/20);
-        if i >= target
-            fit(i) = (M*cos(pi*abs(180-i - target)/180));
-            fitt = fitt + (M*sin(pi*abs(i - target)/180))^2;
-        end
-        if target > i 
-            fit(i) = (M*cos(pi*abs(target - 180-i)/180));
-            fitt = fitt + (M*sin(pi*abs(target - i)/180))^2;
-        end
+        %if i >= target
+        %    fit(i) = M*cos(deg2rad(i - target));
+        %    fitt = fitt + (M*sin(deg2rad((i - target)*1.5)))^2;
+        %end
+        
+        %if i < target
+        %    fit(i) = M*cos(deg2rad(target - i));
+        %    fitt = fitt + (M*sin(deg2rad((target - i)*1.5)))^2;
+        %end
+        %fit(i) = (M*(1-abs(target-i)/(target)))^2 - (M*(abs(target-i)/(target)))^2;
+        %fit(i) = M*(cos(abs(target-i)*pi/180)- sin(abs(target-i)*pi/180));
+        %fit(i) = (M*(1-abs(target-i)/(100)))^1 - (M*(1+abs(i-target)/(100)))^1;
+        %fit(i) = M*exp(-abs(target-i));
+        fit(i) = M*exp(-0.5*abs(target-i)) - (M*exp(0.015*abs(target-i) + M));
     end
     plot(fit)
-    title([q * 10, var(fit), fitt])
+    %patternAzimuth(rb, f); % Amplitude in dB
+    %plot(Adb)
+    title([q * 10, sum(fit)])
     nexttile
-  end
+ end
 
 %Adb_180 = [z Adb_180];
 %polarplot(theta, Adb_180');

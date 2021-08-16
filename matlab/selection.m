@@ -6,7 +6,7 @@ function g = selection(population, population_total)
     
     option_1 = population(r1);
     option_2 = population(r2);
-    if option_1.Fitness > option_2.Fitness
+    if option_1.Fitness < option_2.Fitness
         g = option_1;
         return
     end
