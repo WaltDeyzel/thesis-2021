@@ -1,0 +1,23 @@
+population_total = 200;
+crossover_rate = 0.35;
+mutation_rate = 0.15;
+simulations = 20;
+
+Target angle = normal.
+
+Fitness function;
+
+Aimed to supress below 0. Anything above counted negatively.
+obj.Fitness = -( M  - (tot/tally) ) / (sum(fit));
+
+
+run 1
+Comments:
+	Main 12.13 db at 91 deg.
+	Grating lobe 0.17 db at 69 deg.
+	
+	fitness   = -0.0244
+	spacing   = [0.6509 0.6707 0.5793 0.6707 0.6509]
+	phase     = [192.5 195.4 178.9 203.2 216.8 200.3]
+	amplitude = [1.0000 1.0000 1.0000 1.0000 1.0000 1.0000]
+

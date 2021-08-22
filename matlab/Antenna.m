@@ -28,72 +28,105 @@ classdef Antenna < handle
       end % return antenna array
    
       function mutate(obj)
-            if rand < 0.5
+            c = randi([1 3],1,1);
+            if c == 5
                 obj.antennaArray.PhaseShift(randi([1 (obj.N-1)],1,1)) = round(rand*360);
             end
-            if rand > 0.5
+            if c == 2
                 r = randi([1 (obj.N-1)],1,1);
                 a = rand();
                 obj.antennaArray.ElementSpacing(r) = a;
                 obj.antennaArray.ElementSpacing(obj.N - r) = a;
             end
+            if c == 5
+                obj.antennaArray.AmplitudeTaper(randi([1 (obj.N-1)],1,1)) = rand*10;
+            end
       end % end mutate
+      
+      function mutatePhase(obj)
+          obj.antennaArray.PhaseShift(randi([1 (obj.N-1)],1,1)) = round(rand*360);
+      end % mutate phase only
+      
+      function mutateSpacing(obj)
+           r = randi([1 (obj.N-1)],1,1);
+           a = rand();
+           obj.antennaArray.ElementSpacing(r) = a;
+           obj.antennaArray.ElementSpacing(obj.N - r) = a;
+      end % mutate spacing only
         
       function g = crossover(obj, obj1)
-          % Average of spacing 
-          tot = obj.Fitness + obj1.Fitness;
-          t1  = abs(obj.Fitness/tot);
-          t2  = abs(obj1.Fitness/tot);
+          % Average of spacing
           
-          spacing = (obj.antennaArray.ElementSpacing * t1 + obj1.antennaArray.ElementSpacing * t2);
-          %spacing = (obj.antennaArray.ElementSpacing + obj1.antennaArray.ElementSpacing)/2;
-          obj.antennaArray.ElementSpacing(:) = spacing(:);
+           spacing = (obj.antennaArray.ElementSpacing + obj1.antennaArray.ElementSpacing)/2;
+           obj.antennaArray.ElementSpacing(:) = spacing(:);
         
-        %amp = (obj.antennaArray.AmplitudeTaper * t1 + obj1.antennaArray.AmplitudeTaper * t2);
-        %obj.antennaArray.AmplitudeTaper(:) = amp(:);
-        
-        phaseShift = (obj.antennaArray.PhaseShift * t1 + obj1.antennaArray.PhaseShift * t2);
-        obj.antennaArray.PhaseShift(:) = phaseShift(:);
-        
-        g = obj;
-      end
+           amp = (obj.antennaArray.AmplitudeTaper + obj1.antennaArray.AmplitudeTaper)/2;
+           obj.antennaArray.AmplitudeTaper(:) = amp(:);
+
+           phaseShift = (obj.antennaArray.PhaseShift + obj1.antennaArray.PhaseShift)/2;
+           obj.antennaArray.PhaseShift(:) = phaseShift(:);
+
+            g = obj;
+      end % end crossover
       
       function f = fitness(obj)
       
             Adb = patternAzimuth(obj.antennaArray, obj.freq); % Amplitude in dB
-            Adb_180 = Adb(181:361);
-            %fitt = 0;
-            fit = zeros(180,1);
-            target = 30;
-            %tot = 0;
-            flag = 0;
-            prev = Adb_180(1);
+            Adb_180 = Adb(1:180);
+            fit = flip(zeros(180,1));
+            tot = 0;
+            Tot = 0;
+            Tally = 1;
+            tally = 1;
+            target = 60;
+            M = 10^(Adb_180(target)/20);
+            q = 5;
             for i = 1:180
-                %M = 10^(Adb_180(i)/20);
-                if Adb_180(i) >= prev
-                    prev = Adb_180(i);
-                    flag = 0;
+                dbm = Adb_180(i);
+          
+                m = 10^(dbm/20);
+                fit(i) = m;
+                
+                if (dbm > 0) && (i < target-q || i > target+q)
+                    tally = tally + 1;
+                    tot = tot + m*1.5;
                 end
-                if Adb_180(i) < prev && flag == 0 && i ~= target
-                    %disp('walt' + string(prev)); 
-                    fit(i) = 10^(prev/20)^2;
-                    flag = 1;
-                    prev = Adb_180(i);
+                if (i >= target-q && i <= target+q)
+                    Tally = Tally + 1;
+                    Tot = Tot + M;
                 end
-                if flag == 1
-                    prev = Adb_180(i);
-                end
-                %tot = tot + M;
-                %fit(i) = M*exp(-abs(target-i));
             end
-            obj.Fitness = -(10^(Adb_180(target)/20)^2 - (sum(fit) + 10^(Adb_180(180)/20)));
+            obj.Fitness = -(Tot*tally)/(tot*Tally);
             f = obj.Fitness;
-            
-      
       end % end fitness
       
-      function show(obj)
+      function fitness2(obj)
+            target = 60;
+            Adb = patternAzimuth(obj.antennaArray, obj.freq); % Amplitude in dB
+            Adb_180 = Adb(1:180);
+            q = 10;
+            peak = 0;
+            for i = 1:180
+                dbm = Adb_180(i);
+                if (i < target-q || i > target+q)
+                    if dbm > peak
+                        peak = dbm;
+                    end
+                end
+            end
+            
+            if Adb_180(target) - peak < 3
+                obj.Fitness = 10;
+            end
+      end % end fitness
+      
+      function Azimuth(obj)
         patternAzimuth(obj.antennaArray, obj.freq)
+      end
+      function Plot(obj)
+          figure
+          db = patternAzimuth(obj.antennaArray, obj.freq);
+          plot(db)
       end
    end % end methods
 end

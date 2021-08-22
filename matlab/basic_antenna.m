@@ -9,14 +9,13 @@ rb.Element = [dp,dp,dp,dp,dp,dp];
 rb.ElementSpacing = 0.5;
 t = tiledlayout(3,6);
 
-for q = -10:9
+%for q = -10:9
   
     disp('start')
-    disp(q)
     d = 0.5;            % uniform seperation.
     f = 300000000;      % operating frequency
     lamda= 300000000/f; % wave length
-    steering = q*10;      % desired angle
+    steering = 0;      % desired angle
     a = 360*d*sin(steering *pi/180)/lamda;
     rb.PhaseShift = [a*6 a*5 a*4 a*3 a*2 a*1];
     rb.AmplitudeTaper = [1 1 1 1 1 1];
@@ -45,17 +44,17 @@ for q = -10:9
         %fit(i) = M*(cos(abs(target-i)*pi/180)- sin(abs(target-i)*pi/180));
         %fit(i) = (M*(1-abs(target-i)/(100)))^1 - (M*(1+abs(i-target)/(100)))^1;
         %fit(i) = M*exp(-abs(target-i));
-        fit(i) = M*exp(-0.5*abs(target-i)) - (M*exp(0.015*abs(target-i) + M));
+        %fit(i) = M*exp(-0.5*abs(target-i)) - (M*exp(0.015*abs(target-i) + M));
     end
     plot(fit)
     %patternAzimuth(rb, f); % Amplitude in dB
     %plot(Adb)
-    title([q * 10, sum(fit)])
+    %title([q * 10, sum(fit)])
     nexttile
- end
+ %end
 
 %Adb_180 = [z Adb_180];
 %polarplot(theta, Adb_180');
 %layout(rb);
  %pattern(rb, 300e6)
-%patternAzimuth(rb, f) 
+patternAzimuth(rb, f) 

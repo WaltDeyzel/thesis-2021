@@ -1,0 +1,72 @@
+population_total = 100;
+crossover_rate = 0.35;
+mutation_rate = 0.15;
+simulations = 10;
+
+Target angle = 30deg from normal.
+
+Fitness function;
+
+Aimed to supress below -1. Anything above counted negatively.
+obj.Fitness = -( M  - (tot/tally) ) / (sum(fit));
+
+
+run 1
+Comments:
+	Results were very inaccurate. 
+	Beam landed on 115deg and not 120deg.
+
+	fitness = -0.0090
+	spacing   = [0.5572 0.3559 0.3772 0.3559 0.5572]
+	phase     = [124.4 52.6 300.0 285.1 193.2 175.2]
+	amplitude = [1.0000 1.0000 1.0000 1.0000 1.0000 1.0000]
+
+run 2
+comments:
+	Grating lobes not exceptable.
+	fitness   = -0.0104
+	spacing   = [0.5765 0.4317 0.9044 0.4317 0.5765]
+	phase     = [249.7 126.1 78.3 253.2 184.7 137.5]
+	amplitude = [1.0000 1.0000 1.0000 1.0000 1.0000 1.0000]
+
+run 3
+Comments:
+	Increased population yielded better results. Much better than run 2 but the fitness score is not much better.
+	population_total = 500;
+
+	Grating lobe at 89 deg 2.82db.
+	Main lobe at 61 deg 9.57 db.
+	
+	fitness   = -0.0107
+        spacing   = [0.4804 0.6143 0.4682 0.6143 0.4804]
+        phase     = [222.8 112.4 356.0 226.4 182.6 94.6]
+        amplitude = [1.0000 1.0000 1.0000 1.0000 1.0000 1.0000]
+
+run 4:
+Commment:
+	Increased population yielded better results. Much better than run 2 but the fitness score is not much better.
+	population_total = 500;
+
+	Grating lobe at 86 deg 4.41db.
+	Main lobe at 62 deg 9.95 db.
+
+	fitness   = -0.0117
+	spacing   = [0.5058 0.6347 0.5942 0.6347 0.5058]
+	phase     = [294.3 187.0 72.2 289.8 224.0 134.2]
+	amplitude = [1.0000 1.0000 1.0000 1.0000 1.0000 1.0000]
+
+run 5
+Comments:
+	Increased population yielded better results. Much better than run 2 but the fitness score is not much better.
+	population_total = 500;
+	simulations = 10;
+	
+	Grating lobe at 90 deg 4.52db.
+	Main lobe at 63 deg 10.08 db.
+	
+	fitness   = -0.0132
+	spacing   = [0.5137 0.5235 0.6040 0.5235 0.5137]
+	phase     = [233.8 131.6 84.9 299.3 203.4 145.7]
+	amplitude = [1.0000 1.0000 1.0000 1.0000 1.0000 1.0000]
+
+	
