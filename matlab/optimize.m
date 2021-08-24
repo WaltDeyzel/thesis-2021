@@ -5,11 +5,11 @@ import selection.*
 %PARAMETER AT A TIME.
 
 % REMEMBER TO CHANGE antenna.m MUTATION
-population_total = 1000;
-crossover_rate = 0.15;
+population_total = 100;
+crossover_rate = 0.5;
 mutation_rate = 0.05;
 simulations = 10;
-
+steer = 90;
 % Empty arry to host antennas.
 optimize_population = Antenna.empty(population_total, 0);
 
@@ -21,9 +21,9 @@ for i = 1:population_total
     l1 = rand;
     l2 = rand;
     l3 = rand;
-    %la.ElementSpacing = [0.5765 0.4317 0.9044 0.4317 0.5765];
+    la.ElementSpacing = [0.6403    0.6656    0.6646    0.6656    0.6403];
     a = 360; % degrees
-    la.PhaseShift = [188.6094  138.8906  170.9492  173.6523  155.6328  201.6289];
+    la.PhaseShift = [round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a)];
     optimize_population(i) = Antenna(la, 3e8, 6, 1000);
 end
 
@@ -36,7 +36,7 @@ for a = 1:simulations
     optimize_population_fitness = 0;
     for i = 1:population_total
         % calculate the fitness of each antenna.
-        calc_fit = optimize_population(i).fitness();
+        calc_fit = optimize_population(i).fitness(steer);
         optimize_population_fitness = optimize_population_fitness + calc_fit;
         if calc_fit < optimize_antenna.Fitness
             optimize_antenna = Antenna(optimize_population(i).getArray(), 3e8, 6, calc_fit);
@@ -65,8 +65,8 @@ for a = 1:simulations
         
         if rand < mutation_rate
             % mutation
-            %selected_1.mutatePhase()
-            selected_1.mutateSpacing()
+            selected_1.mutatePhase()
+            %selected_1.mutateSpacing()
         end
         
         population_copy(i) = Antenna(selected_1.getArray(), 3e8, 6, 1000);

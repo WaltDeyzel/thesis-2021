@@ -1,0 +1,33 @@
+population_total = 1000;
+crossover_rate = 0.5;
+mutation_rate = 0.1;
+simulations = 100;
+
+Target angle = 30deg from normal.
+
+Fitness function;
+
+Aimed to supress below -5. Anything above counted negatively.
+obj.Fitness = -(Tot*tally)/(tot*Tally);
+
+If main beam and secondary beam is not 3db apart bust solution.
+
+run 1
+Comments:
+	Results were very inaccurate. 
+	Beam landed on 115deg and not 120deg.
+
+	fitness   = -3.6223
+	spacing   = [0.6259 1.1699 0.6089 1.1699 0.6259]
+	phase     = [155.0 268.9 114.3 217.8 117.2 231.6]
+	amplitude = [1.7355 1.6598 1.1390 2.3271 1.7458 1.0000]
+
+run 2
+comments:
+	500
+	50
+	removed amplitude
+
+
+
+

@@ -1,0 +1,29 @@
+population_total = 100;
+crossover_rate = 0.5;
+mutation_rate = 0.1;
+simulations = 50;
+
+Target angle = 30deg from normal.
+
+Fitness function;
+
+Aimed to supress below 0. Anything above counted negatively.
+obj.Fitness = -(Tot*tally)/(tot*Tally);
+
+If main beam and secondary beam is not 5db apart bust solution.
+
+run 1
+Comments:
+	
+	main: 10.04 db at 122 deg
+	grating: 2.75 db at 72 deg
+
+	fitness   = -3.6223
+	spacing   = [0.5145    0.6596    1.1539    0.6596    0.5145]
+	phase     = [162.0 283.7266   35.0 249.0781   11.0  166.0]
+	amplitude = [1 1 1 1 1 1]
+
+
+
+
+

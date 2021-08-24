@@ -3,10 +3,10 @@ import selection.*
 import data.*
 import genome.*
 
-population_total = 300;
+population_total = 1000;
 crossover_rate = 0.5;
 mutation_rate = 0.1;
-simulations = 50;
+simulations = 100;
 steer = 60;
 % Empty arry to host antennas.
 population = Antenna.empty(population_total, 0);
@@ -29,6 +29,10 @@ for a = 1:simulations
         % calculate the fitness of each antenna.
        
         calc_fit = population(i).fitness(steer);
+        %while calc_fit == 100
+        %    population(i) = genome();
+        %    calc_fit = population(i).fitness(steer);
+        %end
         population_fitness = population_fitness + calc_fit;
         if calc_fit < fittest_antenna.Fitness
             fittest_antenna = Antenna(population(i).getArray(), 3e8, 6, calc_fit);        
@@ -70,4 +74,3 @@ end % end simulation
 
 fittest_antenna.Plot;
 disp(fittest_antenna.Fitness);
-fittest_antenna.compare(steer)
