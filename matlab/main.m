@@ -3,7 +3,7 @@ import selection.*
 import data.*
 import genome.*
 
-population_total = 300;
+population_total = 1000;
 crossover_rate = 0.5;
 mutation_rate = 0.1;
 simulations = 50;
