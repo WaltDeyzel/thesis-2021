@@ -1,0 +1,13 @@
+% Write data to exel spreadsheet.
+
+data = 1:10;
+
+disp('fittest : ' + string(fittest_antenna.Fitness))
+    disp(fittest_antenna.antennaArray.ElementSpacing)
+    disp(fittest_antenna.antennaArray.PhaseShift)
+    disp(fittest_antenna.antennaArray.AmplitudeTaper)
+filename =     
+xlswrite('test.xls', data, 'Sheet1', '5');
+xlswrite('test.xls', data, 'Sheet1', '5');
+xlswrite('test.xls', data, 'Sheet1', '5');
+xlswrite('test.xls', data, 'Sheet1', '5');
