@@ -84,7 +84,7 @@ classdef Antenna < handle
             Tot = 0;
             Tally = 1;
             tally = 1;
-            peak_1 = max(Adb_180);
+            peak_1 = 0;
             peak_2 = 0;
             M = 10^(Adb_180(target)/20);
             q = 8;
@@ -94,8 +94,9 @@ classdef Antenna < handle
                 % determine if current i is a peak
                 if ((i > 1 && i < 180) && (Adb_180(i-1) < dbm) && (Adb_180(i+1) < dbm))
                     % second largest peak
-                    if dbm > peak_2 && dbm ~= peak_1
-                        peak_2 = dbm;
+                    if dbm > peak_1
+                        peak_2 = peak_1;
+                        peak_1 = dbm;
                     end
                 end
                 
