@@ -1,13 +1,14 @@
 import Antenna.*
 import selection.*
-import data.*
+import write2excel.*
 import genome.*
 
-population_total = 1000;
+population_total = 10;
 crossover_rate = 0.5;
 mutation_rate = 0.1;
-simulations = 100;
+simulations = 10;
 steer = 60;
+filename = 'excelTest.xlsx';
 % Empty arry to host antennas.
 population = Antenna.empty(population_total, 0);
 
@@ -29,10 +30,6 @@ for a = 1:simulations
         % calculate the fitness of each antenna.
        
         calc_fit = population(i).fitness(steer);
-        %while calc_fit == 100
-        %    population(i) = genome();
-        %    calc_fit = population(i).fitness(steer);
-        %end
         population_fitness = population_fitness + calc_fit;
         if calc_fit < fittest_antenna.Fitness
             fittest_antenna = Antenna(population(i).getArray(), 3e8, 6, calc_fit);        
@@ -41,8 +38,8 @@ for a = 1:simulations
     
     % Create copy of populaton.
     population_copy = Antenna.empty(population_total, 0);
-    data('blackjack.txt',fittest_antenna)
-    
+    %data('blackjack.txt',fittest_antenna)
+    write2excel('experiment/'+string(filename), fittest_antenna, a);
     % Keep the best antenna. 
     population_copy(1) = fittest_antenna;
     % Display best antenna.
@@ -74,3 +71,4 @@ end % end simulation
 
 fittest_antenna.Plot;
 disp(fittest_antenna.Fitness);
+fittest_antenna.compare(steer)

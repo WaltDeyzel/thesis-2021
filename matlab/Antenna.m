@@ -8,6 +8,7 @@ classdef Antenna < handle
       % 2) Amplitude of signals
       % 3) Phase shift of signals
       N
+      gain
    end
    methods
       % constructor
@@ -17,6 +18,7 @@ classdef Antenna < handle
             obj.Fitness = err;
             obj.freq = f;
             obj.N = n;
+            obj.gain = 0;
         end % end if
       end % end constructor
       function y = getFitness(obj)
@@ -29,7 +31,7 @@ classdef Antenna < handle
    
       function mutate(obj)
             c = randi([1 3],1,1);
-            if c == 5
+            if c == 1
                 mutatePhase(obj);
             end
             if c == 2
@@ -52,7 +54,7 @@ classdef Antenna < handle
       end % mutate spacing only
       
       function mutateAmp(obj)
-           obj.antennaArray.AmplitudeTaper(randi([1 (obj.N-1)],1,1)) = rand*10;
+           obj.antennaArray.AmplitudeTaper(randi([1 (obj.N-1)],1,1)) = rand*2;
       end % mutate spacing only
         
       function g = crossover(obj, obj1)
@@ -87,7 +89,7 @@ classdef Antenna < handle
             peak_1 = 0;
             peak_2 = 0;
             M = 10^(Adb_180(target)/20);
-            q = 8;
+            q = 5;
             for i = 1:180
                 dbm = Adb_180(i); % in decibals
                 
@@ -103,7 +105,7 @@ classdef Antenna < handle
                 m = 10^(dbm/20);  
              
                 % Outside main beam
-                if (dbm > 0) && (i < target-q || i > target+q)
+                if (dbm > -20) && (i < target-q || i > target+q)
                     tally = tally + 1;
                     tot = tot + m;
                 end
@@ -114,7 +116,8 @@ classdef Antenna < handle
                 end
             end
             obj.Fitness = -(Tot*tally)/(tot*Tally);
-            if(peak_1 - peak_2 <= 5)
+            obj.gain = Adb_180(target);
+            if(peak_1 - peak_2 <= 7)
                 obj.Fitness = 100;
             end
             f = obj.Fitness;

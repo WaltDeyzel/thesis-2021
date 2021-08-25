@@ -1,13 +1,14 @@
 import Antenna.*
 import selection.*
-import data.*
+import write2excel.*
 import genome.*
 
-population_total = 1000;
+population_total = 500;
 crossover_rate = 0.5;
 mutation_rate = 0.1;
 simulations = 50;
-steer = 60;
+steer = 60; % from horizontal
+filename = 'AAA_4.xlsx';
 % Empty arry to host antennas.
 population = Antenna.empty(population_total, 0);
 
@@ -37,8 +38,8 @@ for a = 1:simulations
     
     % Create copy of populaton.
     population_copy = Antenna.empty(population_total, 0);
-    data('blackjack.txt',fittest_antenna)
-    
+    %data('blackjack.txt',fittest_antenna)
+    write2excel('experiment/'+string(filename), fittest_antenna, a, steer);
     % Keep the best antenna. 
     population_copy(1) = fittest_antenna;
     % Display best antenna.

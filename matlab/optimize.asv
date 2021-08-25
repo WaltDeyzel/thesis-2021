@@ -14,8 +14,7 @@ steer = 60;
 filename = 'CCC_4.xlsx';
 % Empty arry to host antennas.
 optimize_population = Antenna.empty(population_total, 0);
-% Half wave dipole antenna.
-dp = dipole('Width',0.001, 'Length', 0.5);
+
 % Fill population array
 for i = 1:population_total
     % Randomize la
@@ -25,8 +24,10 @@ for i = 1:population_total
     l2 = rand;
     l3 = rand;
     la.ElementSpacing = [0.4342    0.5253    0.4777    0.5253    0.4342];
-    a = 2;
-    la.AmplitudeTaper = [rand*a rand*a rand*a rand*a rand*a rand*a];
+    l1 = rand*2;
+    l2 = rand*2;
+    l3 = rand*2;
+    la.AmplitudeTaper = [l1 12 l3 l3 1 1];
     a = 360; % degrees
     la.PhaseShift = [312.18 53.45 143.93, 233.61 324.09 53.77];
     optimize_population(i) = Antenna(la, 3e8, 6, 1000);
@@ -71,9 +72,8 @@ for a = 1:simulations
         
         if rand < mutation_rate
             % mutation
-            %selected_1.mutatePhase()
+            selected_1.mutatePhase()
             %selected_1.mutateSpacing()
-            selected_1.mutateAmp()
         end
         
         population_copy(i) = Antenna(selected_1.getArray(), 3e8, 6, 1000);

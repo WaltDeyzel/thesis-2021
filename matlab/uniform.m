@@ -9,13 +9,12 @@ rb.ElementSpacing = 0.5;
 d = 0.5;            % uniform seperation.
 f = 3e8;      % operating frequency
 lamda= 3e8/f; % wave length
-steering = 20;      % desired angle
+steering = 0;      % desired angle
 a = 360*d*sin(steering *pi/180)/lamda;
-a = 127.279;
 rb.PhaseShift = [a*6 a*5 a*4 a*3 a*2 a*1];
 
 Adb = patternAzimuth(rb, 3e8);
-Adb_180 = flip(Adb(1:180));
+Adb_180 = (Adb(1:180));
 m_180 = 10.^(Adb_180/20);
 
 % non-uniform
@@ -32,23 +31,28 @@ Adb2 = patternAzimuth(rb2, 3e8);
 rb3 = linearArray;
 rb3.Element = [dp,dp,dp,dp,dp,dp];
 
-rb3.ElementSpacing = [0.4863    0.4610    0.5675    0.4610    0.4863];
-rb3.PhaseShift = [184  136  172  172  136  184];
-rb3.AmplitudeTaper = [1    1    1    1   1    1];
+rb3.ElementSpacing = [0.835    0.881   0.831    0.881    0.835];
+rb3.PhaseShift = [0    0    0    0   0    0];
+rb3.AmplitudeTaper = [1 1 1 1 1 1];
 
 Adb3 = patternAzimuth(rb3, 3e8);
+Adb3_180 = Adb3(1:180);
 
 theta = linspace(0,pi,180);
 rho = (Adb_180/max(Adb));
-%figure 
-%hold on
-%plot(Adb/max(Adb))
+figure 
+hold on
+plot(Adb_180/max(Adb))
 %plot(Adb2/max(Adb2))
-%plot(Adb3/max(Adb3))
+plot(Adb3_180/max(Adb3))
+title('Beam steered ' + string(abs(90-steer)) + ' degrees from 90 degrees.')
+xlabel('Degrees') 
+ylabel('Normalised Amplitude') 
+legend({'Uniform','non-uniform'})
 
 %figure 
 %polarplot(theta,rho) 
 %rlim([-2.5,1])
 %title('Beam steered ' + string(steering) +' degrees from 90 degrees.')
-disp(max(Adb))
-patternAzimuth(rb, 3e8)
+%disp(max(Adb))
+patternAzimuth(rb3, 3e8)
