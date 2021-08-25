@@ -29,7 +29,7 @@ classdef Antenna < handle
    
       function mutate(obj)
             c = randi([1 3],1,1);
-            if c == 1
+            if c == 5
                 mutatePhase(obj);
             end
             if c == 2
@@ -119,6 +119,30 @@ classdef Antenna < handle
             end
             f = obj.Fitness;
       end % end fitness
+      
+      function y = HPBW(obj, target)
+        Adb = patternAzimuth(obj.antennaArray, obj.freq); % Amplitude in dB
+        Adb_180 = Adb(1:180);
+
+        left = 0;
+        right = 0;
+
+        for i = 1:20
+            if Adb_180(target-i) <= Adb_180(target) - 3
+                left = target-i;
+                break
+            end
+        end
+
+        for i = 1:20
+            if Adb_180(target+i) <= Adb_180(target) - 3
+                right = target+i;
+                break
+            end
+        end
+
+        y = abs(left-right);
+      end % end hpbw
       
       function Azimuth(obj)
         patternAzimuth(obj.antennaArray, obj.freq)

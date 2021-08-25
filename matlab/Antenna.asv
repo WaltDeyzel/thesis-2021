@@ -29,7 +29,7 @@ classdef Antenna < handle
    
       function mutate(obj)
             c = randi([1 3],1,1);
-            if c == 1
+            if c == 5
                 mutatePhase(obj);
             end
             if c == 2
@@ -84,7 +84,7 @@ classdef Antenna < handle
             Tot = 0;
             Tally = 1;
             tally = 1;
-            peak_1 = max(Adb_180);
+            peak_1 = 0;
             peak_2 = 0;
             M = 10^(Adb_180(target)/20);
             q = 8;
@@ -94,8 +94,9 @@ classdef Antenna < handle
                 % determine if current i is a peak
                 if ((i > 1 && i < 180) && (Adb_180(i-1) < dbm) && (Adb_180(i+1) < dbm))
                     % second largest peak
-                    if dbm > peak_2 && dbm ~= peak_1
-                        peak_2 = dbm;
+                    if dbm > peak_1
+                        peak_2 = peak_1;
+                        peak_1 = dbm;
                     end
                 end
                 
@@ -119,6 +120,30 @@ classdef Antenna < handle
             f = obj.Fitness;
       end % end fitness
       
+      function y = HPBW(obj, target)
+        Adb = patternAzimuth(obj.antennaArray, obj.freq); % Amplitude in dB
+        Adb_180 = Adb(1:180);
+
+        left = 0;
+        right = 0;
+
+        for i = 1:20
+            if Adb_180(target-i) <= Adb_180(target) - 3
+                left = target-i;
+                break
+            end
+        end
+
+        for i = 1:20
+            if Adb_180(target+i) <= Adb_180(target) - 3
+                right = target+i;
+                break
+            end
+        end
+
+        y = abs(left-right);
+      end % end hpbw
+      
       function Azimuth(obj)
         patternAzimuth(obj.antennaArray, obj.freq)
       end
@@ -133,10 +158,10 @@ classdef Antenna < handle
         d = 0.5;            % uniform seperation.
         f = 3e8;            % operating frequency
         lamda= 3e8/f;       % wave length
-        a = 360*d*sin(steer*pi/180)/lamda;
+        a = 360*d*sin(-(90-steer)*pi/180)/lamda;
         rb.PhaseShift = [a*6 a*5 a*4 a*3 a*2 a*1];
         Adb = patternAzimuth(rb, 3e8);
-        
+        Adb_180 = Adb(1:180);
         % ------------------------------- 
         
         rb3 = linearArray;
@@ -147,15 +172,16 @@ classdef Antenna < handle
         rb3.AmplitudeTaper = obj.antennaArray.AmplitudeTaper;
 
         Adb3 = patternAzimuth(rb3, 3e8);
+        Adb3_180 = Adb3(1:180);
         
         figure 
         hold on
-        plot(Adb/max(Adb))   % uniform solution.
-        plot(Adb3/max(Adb3)) % uniform solution.
-        title('Beam steered to ' + string(steer) + ' degrees.')
+        plot( Adb_180/max(Adb_180))   % uniform solution.
+        plot(Adb3_180/max(Adb3_180)) % uniform solution.
+        title('Beam steered ' + string(abs(90-steer)) + ' degrees from 90 degrees.')
         xlabel('Degrees') 
-        ylabel('Amplitude') 
-        legend({'Uniform','y = cos(x)'},'Location','southwest')
+        ylabel('Normalised Amplitude') 
+        legend({'Uniform','non-uniform'})
       end
       function Plot(obj)
           figure
