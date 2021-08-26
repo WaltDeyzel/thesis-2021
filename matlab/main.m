@@ -2,13 +2,14 @@ import Antenna.*
 import selection.*
 import write2excel.*
 import genome.*
+import compare.*
 
-population_total = 500;
+population_total = 20;
 crossover_rate = 0.5;
 mutation_rate = 0.1;
-simulations = 50;
-steer = 60; % from horizontal
-filename = 'AAA_4.xlsx';
+simulations = 2;
+steer = 45;             % from horizontal anti clock wise
+filename = 'AAA.xlsx';
 % Empty arry to host antennas.
 population = Antenna.empty(population_total, 0);
 
@@ -36,14 +37,15 @@ for a = 1:simulations
         end
     end % end calculate fitness
     
+    pop_norm = population_fitness/population_total;
     % Create copy of populaton.
     population_copy = Antenna.empty(population_total, 0);
-    %data('blackjack.txt',fittest_antenna)
-    write2excel('experiment/'+string(filename), fittest_antenna, a, steer);
+    write2excel('experiment/'+string(filename), fittest_antenna, a, steer, pop_norm);
+    
     % Keep the best antenna. 
     population_copy(1) = fittest_antenna;
     % Display best antenna.
-    fittest_antenna.Azimuth()
+    % fittest_antenna.Azimuth()
     disp('fit : ' + string(population_copy(1).getFitness))
     
     for i = 2:(population_total)
@@ -64,11 +66,10 @@ for a = 1:simulations
     end
     population(:) = population_copy(:);
     % Track population fitness
-    disp('pop : ' + string(population_fitness/population_total))
-    pop(a) = population_fitness/population_total;
+    disp('pop : ' + string(pop_norm))
    
 end % end simulation
 
-fittest_antenna.Plot;
 disp(fittest_antenna.Fitness);
-fittest_antenna.compare(steer)
+disp(fittest_antenna.antennaArray);
+compare(fittest_antenna, steer)
