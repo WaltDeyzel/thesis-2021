@@ -37,7 +37,7 @@ classdef Antenna < handle
             if c == 2
                 mutateSpacing(obj)
             end
-            if c == 5
+            if c == 3
                 mutateAmp(obj)
             end
       end % end mutate
@@ -54,7 +54,7 @@ classdef Antenna < handle
       end % mutate spacing only
       
       function mutateAmp(obj)
-           obj.antennaArray.AmplitudeTaper(randi([1 (obj.N-1)],1,1)) = rand*2;
+           obj.antennaArray.AmplitudeTaper(randi([1 (obj.N-1)],1,1)) = rand;
       end % mutate spacing only
         
       function g = crossover(obj, obj1)
@@ -63,25 +63,24 @@ classdef Antenna < handle
            c = randi([1 3],1,1);
            if c == 1
                spacing = (obj.antennaArray.ElementSpacing + obj1.antennaArray.ElementSpacing)/2;
-                obj.antennaArray.ElementSpacing(:) = spacing(:);
+                obj.antennaArray.ElementSpacing(:) = round(spacing(:),3);
            end
            
            if c == 2
                amp = (obj.antennaArray.AmplitudeTaper + obj1.antennaArray.AmplitudeTaper)/2;
-               obj.antennaArray.AmplitudeTaper(:) = amp(:);
+               obj.antennaArray.AmplitudeTaper(:) = round(amp(:),3);
            end
            
            if c == 3
                phaseShift = (obj.antennaArray.PhaseShift + obj1.antennaArray.PhaseShift)/2;
-               obj.antennaArray.PhaseShift(:) = phaseShift(:);
+               obj.antennaArray.PhaseShift(:) = round(phaseShift(:),1);
            end
             g = obj;
       end % end crossover
       
       function f = fitness(obj, target)
       
-            Adb = patternAzimuth(obj.antennaArray, obj.freq); % Amplitude in dB
-            Adb_180 = Adb(1:180);
+            Adb_180 = patternAzimuth(obj.antennaArray, obj.freq, 0, 'Azimuth',0:1:180);
             tot = 0;
             Tot = 0;
             Tally = 1;
@@ -89,7 +88,7 @@ classdef Antenna < handle
             peak_1 = 0;
             peak_2 = 0;
             M = 10^(Adb_180(target)/20);
-            q = 5;
+            q = 10;
             for i = 1:180
                 dbm = Adb_180(i); % in decibals
                 
@@ -105,7 +104,7 @@ classdef Antenna < handle
                 m = 10^(dbm/20);  
              
                 % Outside main beam
-                if (dbm > -20) && (i < target-q || i > target+q)
+                if (dbm > -10) && (i < target-q || i > target+q)
                     tally = tally + 1;
                     tot = tot + m;
                 end
@@ -117,7 +116,7 @@ classdef Antenna < handle
             end
             obj.Fitness = -(Tot*tally)/(tot*Tally);
             obj.gain = Adb_180(target);
-            if(peak_1 - peak_2 <= 7)
+            if(peak_1 - peak_2 <= 7) % second beam should at leat be 5db smaller.
                 obj.Fitness = 100;
             end
             f = obj.Fitness;
@@ -147,49 +146,17 @@ classdef Antenna < handle
         y = abs(left-right);
       end % end hpbw
       
+      % DIFFERENT PLOT FOR ANTENNA ARRAY
       function Azimuth(obj)
-        patternAzimuth(obj.antennaArray, obj.freq)
-      end
-      function compare(obj, steer)
-        %compare solution to uniform array.
-        dp = dipole('Width',0.001, 'Length', 0.5);
-        rb = linearArray;
-        rb.Element = [dp,dp,dp,dp,dp,dp];
-
-        rb.ElementSpacing = 0.5; % hald wavelength spacing
-
-        d = 0.5;            % uniform seperation.
-        f = 3e8;            % operating frequency
-        lamda= 3e8/f;       % wave length
-        a = 360*d*sin(-(90-steer)*pi/180)/lamda;
-        rb.PhaseShift = [a*6 a*5 a*4 a*3 a*2 a*1];
-        Adb = patternAzimuth(rb, 3e8);
-        Adb_180 = Adb(1:180);
-        % ------------------------------- 
-        
-        rb3 = linearArray;
-        rb3.Element = [dp,dp,dp,dp,dp,dp];
-
-        rb3.ElementSpacing = obj.antennaArray.ElementSpacing;
-        rb3.PhaseShift = obj.antennaArray.PhaseShift;
-        rb3.AmplitudeTaper = obj.antennaArray.AmplitudeTaper;
-
-        Adb3 = patternAzimuth(rb3, 3e8);
-        Adb3_180 = Adb3(1:180);
-        
-        figure 
-        hold on
-        plot( Adb_180/max(Adb_180))   % uniform solution.
-        plot(Adb3_180/max(Adb3_180)) % uniform solution.
-        title('Beam steered ' + string(abs(90-steer)) + ' degrees from 90 degrees.')
-        xlabel('Degrees') 
-        ylabel('Normalised Amplitude') 
-        legend({'Uniform','non-uniform'})
+        patternAzimuth(obj.antennaArray, obj.freq, 0, 'Azimuth',-0:1:180);
       end
       function Plot(obj)
           figure
           db = patternAzimuth(obj.antennaArray, obj.freq);
           plot(db)
+      end
+      function pattern(obj)
+        pattern(obj.antennaArray, obj.freq)
       end
    end % end methods
 end
