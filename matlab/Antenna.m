@@ -54,7 +54,7 @@ classdef Antenna < handle
       end % mutate spacing only
       
       function mutateAmp(obj)
-           obj.antennaArray.AmplitudeTaper(randi([1 (obj.N-1)],1,1)) = rand;
+           obj.antennaArray.AmplitudeTaper(randi([1 (obj.N)],1,1)) = rand;
       end % mutate spacing only
         
       function g = crossover(obj, obj1)
@@ -116,7 +116,7 @@ classdef Antenna < handle
             end
             obj.Fitness = -(Tot*tally)/(tot*Tally);
             obj.gain = Adb_180(target);
-            if(peak_1 - peak_2 <= 7) % second beam should at leat be 5db smaller.
+            if(peak_1 - peak_2 <= 5) % second beam should at leat be 5db smaller.
                 obj.Fitness = 100;
             end
             f = obj.Fitness;
