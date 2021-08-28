@@ -1,17 +1,10 @@
-function simulate(population_total, crossover_rate, mutation_rate, simulations, steer, filename)
+function y = simulate(population_total, crossover_rate, mutation_rate, simulations, steer, path)
     import Antenna.*
     import selection.*
     import write2excel.*
     import genome.*
     import compare.*
 
-    %population_total = 500;
-    %crossover_rate = 0.5;
-    %mutation_rate = 0.1;
-    %simulations = 20;
-    %steer = 45;             % from horizontal anti clock wise
-    %filename = 'AAA.xlsx';
-    % Empty arry to host antennas.
     population = Antenna.empty(population_total, 0);
 
     % Fill population array
@@ -30,23 +23,29 @@ function simulate(population_total, crossover_rate, mutation_rate, simulations, 
 
         for i = 1:population_total
             % calculate the fitness of each antenna.
-
             calc_fit = population(i).fitness(steer);
             population_fitness = population_fitness + calc_fit;
+            
             if calc_fit < fittest_antenna.Fitness
                 fittest_antenna = Antenna(population(i).getArray(), 3e8, 6, calc_fit);        
             end
         end % end calculate fitness
 
         pop_norm = population_fitness/population_total;
+        
         % Create copy of populaton.
         population_copy = Antenna.empty(population_total, 0);
-        write2excel('experiment/'+string(filename), fittest_antenna, a, steer, pop_norm);
+        
+        write2excel(path, fittest_antenna, a, steer, pop_norm);
+        if a == simulations
+            y = fittest_antenna;
+            break
+        end
 
         % Keep the best antenna. 
         population_copy(1) = fittest_antenna;
-        % Display best antenna.
-        % fittest_antenna.Azimuth()
+        
+        % Display fittest score
         disp('fit : ' + string(population_copy(1).getFitness))
 
         for i = 2:(population_total)
