@@ -13,6 +13,7 @@ function y = uniformLinearArray(spaced, steer)
     lamda= 3e8/f;               % wave length
     steering = steer;           % desired angle
     a = 360*d*sin(steering *pi/180)/lamda;
+    disp(a)
     ULA.PhaseShift = [a*6 a*5 a*4 a*3 a*2 a*1];
     y = ULA;
 end
