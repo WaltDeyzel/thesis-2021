@@ -1,14 +1,23 @@
 import simulate.*
-
-population_total = 500;
+import saveGraph.*
+            
+population_total = 10;
 crossover_rate = 0.5;
 mutation_rate = 0.1;
-simulations = 50;
+simulations = 2;
 
-simulate(population_total, crossover_rate, mutation_rate, simulations, 30, '27Aug/sim60deg1.xlsx')
-simulate(population_total, crossover_rate, mutation_rate, simulations, 30, '27Aug/sim60deg2.xlsx')
-simulate(population_total, crossover_rate, mutation_rate, simulations, 30, '27Aug/sim60deg3.xlsx')
+path = "experiment/29Aug/";
 
-simulate(population_total, crossover_rate, mutation_rate, simulations, 20, '27Aug/sim80deg1.xlsx')
-simulate(population_total, crossover_rate, mutation_rate, simulations, 20, '27Aug/sim80deg2.xlsx')
-simulate(population_total, crossover_rate, mutation_rate, simulations, 20, '27Aug/sim80deg3.xlsx')
+angles = [30 60 45];
+n = 1;
+for steer = angles
+    for i = 1:n
+        % Name of excel file
+        name = "sim"+string(steer)+"deg"+string(i)+".xlsx";
+        % Dynamic path inside folder.
+        path2 = path + string(steer)+"deg/";
+        anss = simulate(population_total, crossover_rate, mutation_rate, simulations, (90-steer), path2+name);
+        saveGraph(anss, steer, path2, i);  
+    end
+end
+
