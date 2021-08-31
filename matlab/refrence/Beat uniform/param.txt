@@ -1,0 +1,25 @@
+population_total = 100;
+crossover_rate = 0.5;
+mutation_rate = 0.1;
+simulations = 20;
+
+
+Simulation:
+spacing = [0.4863    0.4610    0.5675    0.4610    0.4863]
+
+phase   = [184.0444  136.1609  166.8308  172.3374  164.5464  181.6482]
+
+Tweaks after simulation
+
+spacing = [0.4863    0.4610    0.5675    0.4610    0.4863];
+phase   = [184  136  172  172  136  184];
+
+Results 
+
+Main beam = 1 
+Beam width matches that of the uniform array
+
+Side lobes uniform = -0.2012
+Side lobes non-uniform = -0.293
+
+
