@@ -12,6 +12,7 @@ function y = AF(spacing, amplitude, alpha, N)
     F = zeros(1, N);
     AF2 = zeros(361, 0);
     d = 0;
+    ph =0;
     for q = 1:361
         AF = 0;
         for m = 0:N-1
@@ -19,9 +20,10 @@ function y = AF(spacing, amplitude, alpha, N)
             if m < N-1
                 d = d + spacing(m+1);
                 A = amplitude(m+1);
+                ph = alpha(m+1);
+                
             end
-
-            zeta = k*d*cos(q*pi/180) + m*alpha*pi/180;
+            zeta = k*d*cos(q*pi/180) + ph*pi/180;
             temp = A*exp(1i*zeta);
             AF = AF + temp;
             F(m+1) = temp;
