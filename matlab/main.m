@@ -4,12 +4,12 @@ import write2excel.*
 import genome.*
 import compare.*
 
-population_total = 20;
+population_total = 100;
 crossover_rate = 0.5;
-mutation_rate = 0.1;
-simulations = 2;
-steer = 45;             % from horizontal anti clock wise
-filename = 'AAA.xlsx';
+mutation_rate = 0.15;
+simulations = 20;
+steer = 20;             % from horizontal anti clock wise
+filename = '31Aug/GL1.xlsx';
 % Empty arry to host antennas.
 population = Antenna.empty(population_total, 0);
 
@@ -45,7 +45,7 @@ for a = 1:simulations
     % Keep the best antenna. 
     population_copy(1) = fittest_antenna;
     % Display best antenna.
-    % fittest_antenna.Azimuth()
+    fittest_antenna.Azimuth()
     disp('fit : ' + string(population_copy(1).getFitness))
     
     for i = 2:(population_total)
@@ -72,4 +72,5 @@ end % end simulation
 
 disp(fittest_antenna.Fitness);
 disp(fittest_antenna.antennaArray);
-compare(fittest_antenna, steer)
+compare(fittest_antenna, steer);
+%[a, b, c, d, e] = hpbw(fittest_antenna.antennaArray);

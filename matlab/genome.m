@@ -10,15 +10,14 @@ function y = genome()
     % Antenna design. - linear array of 6.
     la.Element = [dp,dp,dp,dp,dp,dp];
     
-    l1 = rand*2;
-    l2 = rand*2;
-    l3 = rand*2;
-    la.ElementSpacing = [l1 l2 l3 l2 l1];
-    l1 = rand*2;
-    l2 = rand*2;
-    l3 = rand*2;
-    la.AmplitudeTaper = [1 1 1 1 1 1];
+    %S1 = rand;
+    %S2 = rand;
+    %S3 = rand;
+    a = 1;
+    la.ElementSpacing = [0.488 0.546 0.438 0.584 0.369];%[rand*a rand*a rand*a rand*a rand*a];       % Symetrically spaced
+    a = 10;
+    la.AmplitudeTaper = [1 1 1 1 1 1]; %[rand*a rand*a rand*a rand*a rand*a rand*a];
     a = 360; % degrees
-    la.PhaseShift = [round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a)];
+    la.PhaseShift = [236 190 101 6 261  203];%[round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a)];
     y = Antenna(la, 3e8, 6, 1000);
 end

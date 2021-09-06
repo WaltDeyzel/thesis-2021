@@ -57,4 +57,46 @@ t = tiledlayout(3,6);
 %polarplot(theta, Adb_180');
 %layout(rb);
  %pattern(rb, 300e6)
-patternAzimuth(rb, f) 
+%patternAzimuth(rb, f) 
+n = 10000000;
+u = zeros(10, 1);
+for i = 1:n
+    r = rand;
+    if r > 0 && r <= 0.1
+        u(1) = u(1)+1;
+    end
+    if r > 0.1 && r <= 0.2
+        u(2) = u(2)+1;
+    end
+    if r > 0.2 && r <= 0.3
+        u(3) = u(3)+1;
+    end
+    if r > 0.3 && r <= 0.4
+        u(4) = u(4)+1;
+    end
+    if r > 0.4 && r <= 0.5
+        u(5) = u(5)+1;
+    end
+    if r > 0.5 && r <= 0.6
+        u(6) = u(6)+1;
+    end
+    if r > 0.6 && r <= 0.7
+        u(7) = u(7)+1;
+    end
+    if r > 0.7 && r <= 0.8
+        u(8) = u(8)+1;
+    end
+    if r > 0.8 && r <= 0.9
+        u(9) = u(9)+1;
+    end
+    if r > 0.9 && r <= 1
+        u(10) = u(10)+1;
+    end
+end
+figure
+title('Distribution of rand function for ' + string(n) + ' samples.','FontSize', 18)
+xlabel('Frequency bins','FontSize', 16) 
+ylabel('Normalised frequency','FontSize', 16) 
+grid on
+hold on
+bar(u/n)

@@ -1,21 +1,23 @@
 import Antenna.*
 import selection.*
 import write2excel.*
-
+import compare.*
 %TAKE FITTEST ANTENNA AND TRY TO MAKE IT EVEN BETTER BY TWEAKING ONLY ONE
 %PARAMETER AT A TIME.
 
 % REMEMBER TO CHANGE antenna.m MUTATION
-population_total = 250;
-crossover_rate = 0.5;
-mutation_rate = 0.2;
-simulations = 30;
-steer = 60;
-filename = 'CCC_4.xlsx';
+population_total = 1;
+crossover_rate = 0.7;
+mutation_rate = 0.15;
+simulations = 1;
+steer = 90;
+filename = 'CCC_8.xlsx';
+
 % Empty arry to host antennas.
 optimize_population = Antenna.empty(population_total, 0);
 % Half wave dipole antenna.
 dp = dipole('Width',0.001, 'Length', 0.5);
+
 % Fill population array
 for i = 1:population_total
     % Randomize la
@@ -24,11 +26,11 @@ for i = 1:population_total
     l1 = rand;
     l2 = rand;
     l3 = rand;
-    la.ElementSpacing = [0.4342    0.5253    0.4777    0.5253    0.4342];
+    la.ElementSpacing = [1.06057842 0.71904713 0.87971245 0.82860774 0.68687533];
     a = 2;
-    la.AmplitudeTaper = [rand*a rand*a rand*a rand*a rand*a rand*a];
-    a = 360; % degrees
-    la.PhaseShift = [312.18 53.45 143.93, 233.61 324.09 53.77];
+    la.AmplitudeTaper = [1 1 1 1 1 1];
+    a = 0; % degrees
+    la.PhaseShift = [round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a)];
     optimize_population(i) = Antenna(la, 3e8, 6, 1000);
 end
 
@@ -51,12 +53,12 @@ for a = 1:simulations
             disp(optimize_antenna.antennaArray.AmplitudeTaper)
         end
     end % end calculate fitness
-    
+     pop_norm = optimize_population_fitness/population_total;
     % Create copy of populaton.
     population_copy = Antenna.empty(population_total, 0);
     % Keep the best antenna. 
     population_copy(1) = optimize_antenna;
-    write2excel('experiment/'+string(filename), optimize_antenna, a, steer);
+    write2excel('experiment/'+string(filename), optimize_antenna, a, steer, pop_norm);
     optimize_antenna.Azimuth
     disp('xxx : ' + string(population_copy(1).getFitness))
     
@@ -73,11 +75,11 @@ for a = 1:simulations
             % mutation
             %selected_1.mutatePhase()
             %selected_1.mutateSpacing()
-            selected_1.mutateAmp()
+            %selected_1.mutateAmp()
         end
         
         population_copy(i) = Antenna(selected_1.getArray(), 3e8, 6, 1000);
     end
     optimize_population(:) = population_copy(:); 
 end % end simulation
-optimize_antenna.compare(steer)
+compare(optimize_antenna, steer)
