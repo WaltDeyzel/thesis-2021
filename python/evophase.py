@@ -10,6 +10,7 @@ class EvoPhase:
         self.mutation_rate = mutation_rate
         self.generations = generations
         self.N = N
+        self.target = target
         
         # Spacing between 
         self.pop_dis = np.ndarray(shape=(self.population_tot, self.N-1))
@@ -27,12 +28,6 @@ class EvoPhase:
         # Fitness
         self.pop_fit = np.zeros(self.population_tot, dtype = np.float)
         
-        standard_deviation = 7
- 
-        x_values = np.arange(0, 180, 1)
-        y_values = norm(target, standard_deviation) 
-        self.ideal = np.array(y_values.pdf(x_values))/np.max(np.array(y_values.pdf(x_values)))
-        
         self.evolve()
     
     def results(self):
@@ -49,7 +44,7 @@ class EvoPhase:
         for i in range(self.generations):
             
             for dna in range(self.population_tot):
-                score = fitness(self.pop_dis[dna], self.pop_pha[dna], self.pop_amp[dna], self.ideal)
+                score = fitness(self.pop_dis[dna], self.pop_pha[dna], self.pop_amp[dna], self.target)
                 self.pop_fit[dna] = score;
                 if score < fittest:
                     fittest = score
@@ -66,7 +61,9 @@ class EvoPhase:
                 # crossover occurs
                     s_1 = selection(self.pop_fit)
                     s_2 = selection(self.pop_fit)
-                    self.pop_pha[s_1] = (self.pop_pha[s_1] + self.pop_pha[s_2] )/2
+                    #self.pop_pha[s_1] = np.divide(self.pop_pha[s_1] + self.pop_pha[s_2],2)
+                    self.pop_pha[s_1][3:5] = (self.pop_pha[s_1][3:5] + self.pop_pha[s_2][3:5])/2
+                    self.pop_pha[s_2][0:2] = (self.pop_pha[s_1][0:2] + self.pop_pha[s_2][0:2])/2
 
             if mutations[i] < self.mutation_rate:
                 # mutation occurs
@@ -88,10 +85,10 @@ if __name__ == '__main__':
     
     sims = 5
     best_p = np.zeros((sims, N), dtype=float)
-   
+
     # Spacing and Phase
     for i in range(sims):
-        evo = EvoPhase(10, 0.5, 0.1, 1000, N, d, 60)
+        evo = EvoPhase(100, 0.5, 0.05, 100, N, d, target)
         pha = evo.results()
         best_p[i] = pha
         
@@ -106,6 +103,5 @@ if __name__ == '__main__':
     q = np.argmin(fit)
     
     show(d,  best_p[q],  I)
-    showUniform()
     plt.show()
-    
+    print(best_p)
