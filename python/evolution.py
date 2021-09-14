@@ -4,6 +4,8 @@ from scipy.stats import norm
 
 from functions import *
 
+from evophase import *
+
 global LOW, HIGH
 LOW = 0.1
 HIGH = 1
@@ -38,20 +40,11 @@ class Evolution:
         self.pop_pha = np.random.uniform(size = (self.population_tot, self.N), low = 0, high = 2*np.pi) # randians
         
         # Amplitude 
-        self.pop_amp = np.random.uniform(size=(self.population_tot, self.N), low = 1, high=1)
+        self.pop_amp = np.random.uniform(size=(self.population_tot, self.N), low = 0, high=1)
         
         # Fitness
         self.pop_fit = np.zeros(self.population_tot, dtype = np.float)
         
-        
-        standard_deviation = 5
- 
-        x_values = np.arange(0, 180, 1)
-        y_values = norm(target, standard_deviation) 
-        self.ideal = np.array(y_values.pdf(x_values))/np.max(np.array(y_values.pdf(x_values)))
-        # print(type(self.ideal))
-        # plt.plot(x_values, self.ideal)
-        # plt.show()
         self.evolve()
     
     def results(self):
@@ -64,23 +57,26 @@ class Evolution:
         mutations = np.random.uniform(size=(self.generations), low = 0, high=1)
         # Probabilities for which parameter to mutate or to do crossover
         choice = np.random.uniform(size=(self.generations), low = 0, high=1)
-        index = 0;
-        fittest = 0
+        
+        
         for i in range(self.generations):
-            
+            index = 0;
+            fittest = 0
             for dna in range(self.population_tot):
-                score = fitness(self.pop_dis[dna], self.pop_pha[dna], self.pop_amp[dna], self.ideal)
+                score = fitness(self.pop_dis[dna], self.pop_pha[dna], self.pop_amp[dna], self.target)
                 self.pop_fit[dna] = score;
                 if score < fittest:
+                    # evo = EvoPhase(1000, 0.5, 0.05, 1000, self.N, self.pop_dis[dna], self.target)
+                    # self.pop_pha[dna] = evo.results()
                     fittest = score
                     index = dna
             
             self.pop_dis[0] = self.pop_dis[index]
             self.pop_pha[0] = self.pop_pha[index]
-            #self.pop_amp[0] = self.pop_amp[index]
+            self.pop_amp[0] = self.pop_amp[index]
              
             if i == self.generations-1:
-                print('DONE')
+                print('Gen', i)
                 break
             
             if crossovers[i] < self.crossover_rate:
@@ -92,8 +88,8 @@ class Evolution:
                         self.pop_dis[s_1] = (self.pop_dis[s_1] + self.pop_dis[s_2] )/2
                     elif choice[i] > 0.5 and self.settings[1]:
                         self.pop_pha[s_1] = (self.pop_pha[s_1] + self.pop_pha[s_2] )/2
-                    elif choice[i] > 0.66 and self.settings[2]:
-                        self.pop_amp[s_1] = (self.pop_amp[s_1] + self.pop_amp[s_2])/2
+                    #elif choice[i] > 0.66 and self.settings[2]:
+                    self.pop_amp[s_1] = (self.pop_amp[s_1] + self.pop_amp[s_2])/2
             
             if mutations[i] < self.mutation_rate:
                 # mutation occurs
@@ -101,13 +97,17 @@ class Evolution:
                 if choice[-i] <= 0.5 and self.settings[0]:
                     rs = np.random.uniform(low = LOW, high=HIGH)
                     a = np.random.randint(low=0, high=self.N-1)
-                   
+                    # SYMETRICAL SPACING 
                     self.pop_dis[s_1][a] =  rs
                     self.pop_dis[s_1][(self.N-2 - a)] =  rs
                     
                 elif choice[-i] > 0.5 and self.settings[1]:
-                    self.pop_pha[s_1][np.random.randint(low=0, high=self.N)] =  np.random.uniform(low = 0, high=2*np.pi)
-                elif choice[-i] > 0.66 and self.settings[2]:
+                    #self.pop_pha[s_1][np.random.randint(low=0, high=self.N)] =  np.random.uniform(low = 0, high=2*np.pi)
+                    # OPTIMIZE PHASE HERE
+                    evo = EvoPhase(50, 0.5, 0.05, 1000, N, self.pop_dis[s_1], target)
+                    self.pop_pha[s_1] = evo.results()
+
+                if choice[-i] > 0.5 and self.settings[2]:
                     self.pop_amp[s_1][np.random.randint(low=0, high=self.N)] =  np.random.uniform(low = 0, high=3)
         
 
@@ -123,9 +123,9 @@ if __name__ == "__main__":
     best_p = np.zeros((sims, N), dtype=float)
     best_a = np.zeros((sims, N), dtype=float)
     # Spacing and Phase
-    settings = np.array([True, True, False], dtype=bool);
+    settings = np.array([True, True, True], dtype=bool);
     for i in range(sims):
-        evo = Evolution(500, 0.5, 0.1, 5000, N, target, settings)
+        evo = Evolution(1000, 0.5, 0.1, 500, N, target, settings)
         dis, pha, amp = evo.results()
         best_d[i] = dis
         best_p[i] = pha
