@@ -3,13 +3,10 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
 from scipy.stats import norm
 
-def fitness(dd, alpha, I, ideal):
+def fitness(dd, alpha, I, target):
 
-    f_abs_ = AF(dd, alpha, I)
-    f_ = np.divide(f_abs_, np.max(f_abs_))
-
-    return np.sum(np.square(np.subtract(ideal, f_)))
-
+    f_ = AF(dd, alpha, I)
+    return np.divide(np.square(np.sum(f_)), f_[target-1])
 
 def selection(fitness):
     # fitness array
