@@ -101,11 +101,11 @@ class Evolution:
                     self.pop_dis[s_1][a] =  rs
                     self.pop_dis[s_1][(self.N-2 - a)] =  rs
                     
-                elif choice[-i] > 0.5 and self.settings[1]:
+                #elif choice[-i] > 0.5 and self.settings[1]:
                     #self.pop_pha[s_1][np.random.randint(low=0, high=self.N)] =  np.random.uniform(low = 0, high=2*np.pi)
                     # OPTIMIZE PHASE HERE
-                    evo = EvoPhase(50, 0.5, 0.05, 1000, N, self.pop_dis[s_1], target)
-                    self.pop_pha[s_1] = evo.results()
+                evo = EvoPhase(100, 0.5, 0.05, 1000, N, self.pop_dis[s_1], target)
+                self.pop_pha[s_1] = evo.results()
 
                 if choice[-i] > 0.5 and self.settings[2]:
                     self.pop_amp[s_1][np.random.randint(low=0, high=self.N)] =  np.random.uniform(low = 0, high=3)
@@ -118,14 +118,14 @@ if __name__ == "__main__":
     N = 6;
     # Constants
     
-    sims = 1
+    sims = 5
     best_d = np.zeros((sims, N-1), dtype=float)
     best_p = np.zeros((sims, N), dtype=float)
     best_a = np.zeros((sims, N), dtype=float)
     # Spacing and Phase
     settings = np.array([True, True, True], dtype=bool);
     for i in range(sims):
-        evo = Evolution(1000, 0.5, 0.1, 500, N, target, settings)
+        evo = Evolution(500, 0.5, 0.1, 500, N, target, settings)
         dis, pha, amp = evo.results()
         best_d[i] = dis
         best_p[i] = pha
@@ -141,14 +141,18 @@ if __name__ == "__main__":
     # select fittest solution    
     q = np.argmin(fit)
     
+    from wexcel import *
+    date_file = '30deg_1.xlsx'
+    
+    save_data(best_d, date_file, 'spa')
+    save_data(best_p, date_file, 'pha')
+    save_data(best_a, date_file, 'amp')
+    save_data(fit, date_file, 'fit')
+    
     show(best_d[q],  best_p[q],  best_a[q])
     #showUniform()
     plt.show()
-    from wexcel import *
-    # save_data([best_d[q],  best_p[q],  best_a[q], fit[q]], 'Data.xlsx', 'spacing', 10)
-    # save_data(np.round(best_d[q],3), 'Data.xlsx', 'spacing', 10)
-    # save_data(np.round(best_p[q]*180/np.pi,2), 'Data.xlsx', 'phase', 10)
-    # save_data(np.round(best_a[q],2), 'Data.xlsx', 'amp', 10)
+    
 
     
     
