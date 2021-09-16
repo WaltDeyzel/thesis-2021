@@ -85,3 +85,53 @@ def results(best_d, best_p, best_a, fit):
     print('dis', np.round(best_d[q],2))
     print('pha', np.round(best_p[q]*180/np.pi,2))
     print('amp', np.round(best_a[q],2))
+    
+    
+def HPBW(dd, alpha, I):
+    f_ = np.log10(AF(dd, alpha, I))*20
+    
+    dir = np.argmax(f_)
+    gain = f_[dir-1]
+    point = f_[dir-1]
+    i = 0
+    while point > gain - 3 and (i + dir < 180):
+        point = f_[dir-1 + i]
+        i += 1
+    point = f_[dir-1]   
+    a = 0 
+    while point > gain - 3  and (dir  - a > 0):
+        point = f_[dir-1 - a]
+        a += 1
+    
+    
+    hpbw = i + a 
+    
+    return hpbw
+
+def SLL(dd, alpha, I):
+    
+    f_ = AF(dd, alpha, I)
+    
+    main_beam = 0
+    sll = 0
+    
+    if f_[0] > f_[-1]:
+        main_beam = f_[0]
+        sll = f_[-1]
+    elif f_[-1] > f_[0]:
+        main_beam = f_[-1]
+        sll = f_[0]
+    
+    for i in range(1, len(f_)-1):
+        
+        if((f_[i] > f_[i-1] and f_[i] > f_[i+1]) or (f_[i] > f_[i-1] and f_[i] == f_[i+1])):
+            #peak
+            print(f_[i])
+            if f_[i] > sll and f_[i] < main_beam:
+                sll = f_[i]
+            elif f_[i] > main_beam:
+                sll = main_beam
+                main_beam = f_[i] 
+    
+    return 20*np.log10(sll) - 20*np.log10(np.max(f_))
+    
