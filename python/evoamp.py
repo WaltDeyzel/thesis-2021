@@ -38,34 +38,37 @@ class EvoPhase:
         crossovers = np.random.uniform(size=(self.generations), low = 0, high=1)
         mutations = np.random.uniform(size=(self.generations), low = 0, high=1)
         
-        index = 0;
-        fittest = 0
         for i in range(self.generations):
             
             for dna in range(self.population_tot):
                 score = fitness(self.pop_dis[dna], self.pop_pha[dna], self.pop_amp[dna], self.target)
                 self.pop_fit[dna] = score;
-                if score < fittest:
-                    fittest = score
-                    index = dna
-            
+               
+            index = np.argmin(self.pop_fit)
             self.pop_amp[0] = self.pop_amp[index]
+            self.pop_amp[-1] = self.pop_amp[index]
            
-             
+            #print(self.pop_fit[index])
             if i == self.generations-1:
                 print('DONE')
                 break
             
-            if crossovers[i] < self.crossover_rate:
-                # crossover occurs
-                    s_1 = selection(self.pop_fit)
+            for _ in range(50):
+                s_1 = selection(self.pop_fit)
+                if crossovers[i] < self.crossover_rate:
+                    # crossover occurs
+                    
                     s_2 = selection(self.pop_fit)
                     self.pop_amp[s_1] = (self.pop_amp[s_1] + self.pop_amp[s_2])/2
 
-            if mutations[i] < self.mutation_rate:
-                # mutation occurs
-                s_1 = selection(self.pop_fit)
-                self.pop_amp[s_1][np.random.randint(low=0, high=self.N)] =  np.random.uniform(low = 0, high=1)
+                if mutations[i] < self.mutation_rate:
+                    # mutation occurs
+                    #self.pop_amp[s_1][np.random.randint(low=0, high=self.N)] =  np.random.uniform(low = 0, high=1)
+                    rs = np.random.uniform(low = 0, high=1)
+                    a = np.random.randint(low=0, high=self.N)
+                    # SYMETRICAL amp 
+                    self.pop_amp[s_1][a] =  rs
+                    self.pop_amp[s_1][(self.N-1 - a)] =  rs
         
 
 
@@ -85,14 +88,19 @@ if __name__ == '__main__':
 
     # Spacing and Phase
     for i in range(sims):
-        evo = EvoPhase(1000, 0.5, 0.1, 1000, N, d, target)
+        evo = EvoPhase(500, 0.5, 0.1, 5000, N, d, target)
         amp = evo.results()
         best_a[i] = amp
         
     # Recalculate all fitness scores
     fit = np.zeros((sims), dtype=float)
+    hpbw = np.zeros((sims), dtype=float)
+    sll = np.zeros((sims), dtype=float)
     for i in range(sims):
         fit[i] = fitness(d, p, best_a[i], target)
+        hpbw[i] = HPBW(d, p, best_a[i])
+        sll[i] = SLL(d, p, best_a[i])
+        
    
     # select fittest solution    
     q = np.argmin(fit)
@@ -104,10 +112,14 @@ if __name__ == '__main__':
     show(d,  p, np.array([1, 1, 1, 1, 1, 1]))
     
     from wexcel import *
-    date_file = 'amp_3.xlsx'
+    date_file = 'amp_6.xlsx'
     
     save_data(best_a, date_file, 'amp')
-    save_data([HPBW(d, p, best_a[q]), SLL(d, p, best_a[q])], date_file, 'hpbw')
+    #save_data([HPBW(d, p, best_a[q]), SLL(d, p, best_a[q])], date_file, 'hpbw')
+    save_data(fit, date_file, 'fit')
+    save_data(hpbw, date_file, 'hpbw')
+    save_data(sll, date_file, 'sll')
+    
     
     print('SLL', SLL(d, p, best_a[q]))
     print('HPBW',HPBW(d, p, best_a[q]))
