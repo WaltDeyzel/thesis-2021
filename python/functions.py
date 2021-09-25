@@ -6,7 +6,14 @@ from scipy.stats import norm
 def fitness(dd, alpha, I, target):
 
     f_ = AF(dd, alpha, I)
-    return np.divide(np.square(np.sum(f_)), f_[target-1])
+    #return np.divide(np.square(np.sum(f_)), f_[target-1])
+    return np.sum(f_)/f_[target-1]**2
+    #return - f_[target-1]**2 / np.average(f_) 
+    #return np.sum(np.square(f_))
+    #return np.divide(np.average(f_),np.square(f_[target-1])) 
+    # if HPBW(dd, alpha, I) > 22:
+    #     return 1
+    # return SLL(dd, alpha, I)
 
 def selection(fitness):
     # fitness array
@@ -42,49 +49,19 @@ def show(dd, alpha, I):
     plt.ylabel("Normalized Magnitude")
     #plt.show()
 
-def showUniform():
+def showUniform(target):
+    a = np.pi*np.sin((90-target)*np.pi/180)
     d = np.array([0.5, 0.5, 0.5, 0.5, 0.5])
-    ph = np.array([0, 0, 0, 0, 0, 0])
+    ph = np.array([a*6, a*5, a*4, a*3, a*2, a*1])
+    print('LAA', a)
+    print(ph)
     am = np.array([1, 1, 1, 1, 1, 1])
-    show(d, ph, am)
-    d = np.array([1, 1, 1, 1, 1])
     show(d, ph, am)
     
 def showAll(spacing, alpha, amplitude, fitness):
     for i in range(alpha.shape[0]):
         print(fitness[i])
         show(spacing[i], alpha[i], amplitude[i])
-    
-def results(best_d, best_p, best_a, fit):
-    # select fittest solution    
-    q = np.argmin(fit)
-    print('RESULTS')
-    print()
-    print('Best_d')
-    print(best_d)
-    print('Var')
-    print(np.round(np.var(best_d, axis=0),3))
-    print()
-    
-    print('Best_p')
-    #print(best_p*180/np.pi)
-    print('Var')
-    print(np.round(np.var(best_p, axis=0),3))
-    print()
-    
-    print('Best_a')
-    #print(best_a)
-    print('Var')
-    print(np.round(np.var(best_a, axis=0),3))
-    print()
-    
-    print()
-    print('fitAll', np.round(fit,5))
-    print('fit', np.min(fit))            
-    print('info')         
-    print('dis', np.round(best_d[q],2))
-    print('pha', np.round(best_p[q]*180/np.pi,2))
-    print('amp', np.round(best_a[q],2))
     
     
 def HPBW(dd, alpha, I):
@@ -115,23 +92,21 @@ def SLL(dd, alpha, I):
     main_beam = 0
     sll = 0
     
-    if f_[0] > f_[-1]:
-        main_beam = f_[0]
-        sll = f_[-1]
-    elif f_[-1] > f_[0]:
-        main_beam = f_[-1]
-        sll = f_[0]
-    
     for i in range(1, len(f_)-1):
         
         if((f_[i] > f_[i-1] and f_[i] > f_[i+1]) or (f_[i] > f_[i-1] and f_[i] == f_[i+1])):
             #peak
-            print(f_[i])
+            
             if f_[i] > sll and f_[i] < main_beam:
                 sll = f_[i]
             elif f_[i] > main_beam:
                 sll = main_beam
                 main_beam = f_[i] 
-    
+                
+    if f_[0] >= f_[-1] and f_[0] > sll:
+        sll = f_[0]
+    if f_[-1] >= f_[0] and f_[-1] > sll:
+        sll = f_[-1]
+
     return 20*np.log10(sll) - 20*np.log10(np.max(f_))
     
