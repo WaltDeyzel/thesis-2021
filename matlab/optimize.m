@@ -7,11 +7,11 @@ import compare.*
 
 % REMEMBER TO CHANGE antenna.m MUTATION
 population_total = 1;
-crossover_rate = 0.7;
-mutation_rate = 0.15;
+crossover_rate = 0;
+mutation_rate = 0;
 simulations = 1;
 steer = 90;
-filename = 'CCC_8.xlsx';
+filename = 'mmm.xlsx';
 
 % Empty arry to host antennas.
 optimize_population = Antenna.empty(population_total, 0);
@@ -26,10 +26,10 @@ for i = 1:population_total
     l1 = rand;
     l2 = rand;
     l3 = rand;
-    la.ElementSpacing = [1.06057842 0.71904713 0.87971245 0.82860774 0.68687533];
+    la.ElementSpacing = [0.5 0.5 0.5 0.5 0.5];
     a = 2;
     la.AmplitudeTaper = [1 1 1 1 1 1];
-    a = 0; % degrees
+    a = 0; % degrees 
     la.PhaseShift = [round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a) round(rand*a)];
     optimize_population(i) = Antenna(la, 3e8, 6, 1000);
 end
@@ -73,7 +73,7 @@ for a = 1:simulations
         
         if rand < mutation_rate
             % mutation
-            %selected_1.mutatePhase()
+            selected_1.mutatePhase()
             %selected_1.mutateSpacing()
             %selected_1.mutateAmp()
         end

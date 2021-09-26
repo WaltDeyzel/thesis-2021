@@ -8,7 +8,7 @@ function saveGraph(LAA, steer, path, no) %Linear antenna array
     
     gcf = figure ;
     set(gcf, 'Visible', 'off');
-    set(gcf,'position',get(0,'ScreenSize'))
+    %set(gcf,'position',get(0,'ScreenSize'))
     hold on
 
     plot((Adb_un - max(Adb_un)),'LineWidth',1)

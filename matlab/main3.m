@@ -33,4 +33,6 @@ for steer = angles
         % amplitude
     end
 end
+h = chebin(6);
+disp(h)
 

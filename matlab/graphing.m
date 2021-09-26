@@ -4,7 +4,7 @@ import uniformLinearArray.*
 import grpahNormdB.*
 dp = dipole('Width',0.001, 'Length', 0.5);
 
-steer = 70;
+steer = 90-24;
 rb = uniformLinearArray(0.5, steer);
 Adb = patternAzimuth(rb, 3e8);
 Adb_180 = Adb(1:180);
@@ -20,30 +20,28 @@ i = 3;
 rb2.ElementSpacing = a;
 rb2.PhaseShift = b;
 rb2.AmplitudeTaper = c;
-
+gcf = figure;
+hold on
 Adb2 = patternAzimuth(rb2, 3e8);
 Adb2_180 = Adb2(1:180) ;
 
-gcf = figure ;
-set(gcf,'position',get(0,'ScreenSize'))
-hold on
 
 plot(flip(Adb_180 - max(Adb)),'LineWidth',1)
 plot(flip(Adb2_180 - max(Adb2)),'LineWidth',1)
 
-title('Beam steered ' + string(steer) + '^{\circ}','FontSize', 18)
+title('GA vs Beam steered ' + string(steer) + '^{\circ}','FontSize', 18)
 xlabel('Degrees','FontSize', 16) 
 ylabel('Amplitude Normalized (dB)','FontSize', 16) 
-legend({'Uniform','non-uniform'},'FontSize', 14)
+legend({'Uniform','GA'},'FontSize', 14)
 grid on
-%saveas(gcf,'graphs/28Aug/plot' + string(steer)+'deg_'+string(i)'+'.jpg')
-%saveas(gcf,'graphs/28Aug/plot' + string(steer)+'deg_'+string(i)'+'.emf')
-warning('off')
-gcf = figure;
+%saveas(gcf,'graphs/images/plot' + string(steer)+'deg_'+string(i)'+'.jpg')
+%saveas(gcf,'graphs/images/plot' + string(steer)+'deg_'+string(i)'+'.emf')
+%warning('off')
+%gcf = figure;
 
-patternAzimuth(rb2, 3e8, 0, 'Azimuth',0:1:180)
-%saveas(gcf,'graphs/28Aug/pol' + string(steer)+'deg_'+string(i)'+'.jpg')
-%saveas(gcf,'graphs/28Aug/pol' + string(steer)+'deg_'+string(i)'+'.emf')
+%patternAzimuth(rb2, 3e8, 0, 'Azimuth',0:1:180)
+%saveas(gcf,'graphs/images/pol' + string(steer)+'deg_'+string(i)'+'.jpg')
+%saveas(gcf,'graphs/images/pol' + string(steer)+'deg_'+string(i)'+'.emf')
     
 
  
