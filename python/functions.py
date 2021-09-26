@@ -6,8 +6,9 @@ from scipy.stats import norm
 def fitness(dd, alpha, I, target):
 
     f_ = AF(dd, alpha, I)
+    dir = np.argmax(f_)
     #return np.divide(np.square(np.sum(f_)), f_[target-1])
-    return np.sum(f_)/f_[target-1]**2
+    return np.sum(f_)/f_[target-1]**2 * (1 + np.abs(dir - target)/target)
     #return - f_[target-1]**2 / np.average(f_) 
     #return np.sum(np.square(f_))
     #return np.divide(np.average(f_),np.square(f_[target-1])) 
@@ -53,9 +54,9 @@ def showUniform(target):
     a = np.pi*np.sin((90-target)*np.pi/180)
     d = np.array([0.5, 0.5, 0.5, 0.5, 0.5])
     ph = np.array([a*6, a*5, a*4, a*3, a*2, a*1])
-    print('LAA', a)
-    print(ph)
     am = np.array([1, 1, 1, 1, 1, 1])
+    print('LAA', a, fitness(d, ph, am, target))
+    print(ph)
     show(d, ph, am)
     
 def showAll(spacing, alpha, amplitude, fitness):
@@ -109,4 +110,23 @@ def SLL(dd, alpha, I):
         sll = f_[-1]
 
     return 20*np.log10(sll) - 20*np.log10(np.max(f_))
+
+def SLL2(dd, alpha, I):
     
+    f_ = AF(dd, alpha, I)
+    
+    main_beam = 0
+    sll = 0
+    
+    for i in range(1, len(f_)-1):
+        
+        if((f_[i] > f_[i-1] and f_[i] > f_[i+1]) or (f_[i] > f_[i-1] and f_[i] == f_[i+1])):
+            #peak
+            
+            if f_[i] > sll and f_[i] < main_beam:
+                sll = f_[i]
+            elif f_[i] > main_beam:
+                sll = main_beam
+                main_beam = f_[i] 
+
+    return 20*np.log10(sll) - 20*np.log10(np.max(f_))
