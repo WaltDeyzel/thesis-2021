@@ -8,7 +8,7 @@ def fitness(dd, alpha, I, target):
     f_ = AF(dd, alpha, I)
     dir = np.argmax(f_)
     #return np.divide(np.square(np.sum(f_)), f_[target-1])
-    return np.sum(f_)/f_[target-1]**2 * (1 + np.abs(dir - target)/target)
+    return np.sum(f_)/f_[target-1]**2 * (1 + np.abs(dir - target-1)/(target-1))
     #return - f_[target-1]**2 / np.average(f_) 
     #return np.sum(np.square(f_))
     #return np.divide(np.average(f_),np.square(f_[target-1])) 
@@ -72,12 +72,12 @@ def HPBW(dd, alpha, I):
     gain = f_[dir-1]
     point = f_[dir-1]
     i = 0
-    while point > gain - 3 and (i + dir < 180):
+    while point > gain - 2.5 and (i + dir < 180):
         point = f_[dir-1 + i]
         i += 1
     point = f_[dir-1]   
     a = 0 
-    while point > gain - 3  and (dir  - a > 0):
+    while point > gain - 2.5 and (dir  - a > 0):
         point = f_[dir-1 - a]
         a += 1
     
@@ -130,3 +130,8 @@ def SLL2(dd, alpha, I):
                 main_beam = f_[i] 
 
     return 20*np.log10(sll) - 20*np.log10(np.max(f_))
+
+
+def getDirectivity(dd, alpha, I, target):
+    f_ = AF(dd, alpha, I)
+    return f_[target-1]/np.average(f_)
