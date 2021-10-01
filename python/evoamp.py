@@ -41,7 +41,7 @@ class EvoPhase:
         for i in range(self.generations):
             
             for dna in range(self.population_tot):
-                score = fitness(self.pop_dis[dna], self.pop_pha[dna], self.pop_amp[dna], self.target)
+                score = fitnessX(self.pop_dis[dna], self.pop_pha[dna], self.pop_amp[dna], self.target)
                 self.pop_fit[dna] = score;
                
             index = np.argmin(self.pop_fit)
@@ -53,7 +53,7 @@ class EvoPhase:
                 print('DONE')
                 break
             
-            for _ in range(50):
+            for _ in range(1):
                 s_1 = selection(self.pop_fit)
                 if crossovers[i] < self.crossover_rate:
                     # crossover occurs
@@ -68,27 +68,33 @@ class EvoPhase:
                     a = np.random.randint(low=0, high=self.N)
                     # SYMETRICAL amp 
                     self.pop_amp[s_1][a] =  rs
-                    self.pop_amp[s_1][(self.N-1 - a)] =  rs
+                    #self.pop_amp[s_1][(self.N-1 - a)] =  rs
         
 
-
+def fitnessX(ddd, alpha, I, target):
+    f_ = AF(ddd, alpha, I)
+    directivity = np.average(f_)/f_[target-1]
+    if HPBW(ddd, alpha, I) <= 20 and SLL(ddd, alpha, I) < -5:
+        return SLL(ddd, alpha, I)
+    return 100
      
     
 
 if __name__ == '__main__':
     d = np.array([0.5, 0.5, 0.5, 0.5, 0.5])
+    #d = np.array([1.41505558, 0.9996318, 0.44537543, 0.45855375, 1.45504275])
     p = np.array([0, 0, 0, 0, 0, 0])
 
     target = 90
     N = 6;
     # Constants
     
-    sims = 10
+    sims = 3
     best_a = np.zeros((sims, N), dtype=float)
 
     # Spacing and Phase
     for i in range(sims):
-        evo = EvoPhase(500, 0.5, 0.1, 5000, N, d, target)
+        evo = EvoPhase(5, 0.5, 1, 10000, N, d, target)
         amp = evo.results()
         best_a[i] = amp
         
@@ -97,7 +103,7 @@ if __name__ == '__main__':
     hpbw = np.zeros((sims), dtype=float)
     sll = np.zeros((sims), dtype=float)
     for i in range(sims):
-        fit[i] = fitness(d, p, best_a[i], target)
+        fit[i] = fitnessX(d, p, best_a[i], target)
         hpbw[i] = HPBW(d, p, best_a[i])
         sll[i] = SLL(d, p, best_a[i])
         
@@ -108,17 +114,18 @@ if __name__ == '__main__':
     print('RESULTS')
     print(best_a[q])
     print(best_a)
-    show(d,  p, best_a[q])
     show(d,  p, np.array([1, 1, 1, 1, 1, 1]))
+    show(d,  p, best_a[q])
+    
     
     from wexcel import *
     date_file = 'amp_6.xlsx'
     
-    save_data(best_a, date_file, 'amp')
-    #save_data([HPBW(d, p, best_a[q]), SLL(d, p, best_a[q])], date_file, 'hpbw')
-    save_data(fit, date_file, 'fit')
-    save_data(hpbw, date_file, 'hpbw')
-    save_data(sll, date_file, 'sll')
+    # save_data(best_a, date_file, 'amp')
+    # #save_data([HPBW(d, p, best_a[q]), SLL(d, p, best_a[q])], date_file, 'hpbw')
+    # save_data(fit, date_file, 'fit')
+    # save_data(hpbw, date_file, 'hpbw')
+    # save_data(sll, date_file, 'sll')
     
     
     print('SLL', SLL(d, p, best_a[q]))

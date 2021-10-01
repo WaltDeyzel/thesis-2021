@@ -10,7 +10,7 @@ population_total = 1;
 crossover_rate = 0;
 mutation_rate = 0;
 simulations = 1;
-steer = 90;
+steer = 27;
 filename = 'mmm.xlsx';
 
 % Empty arry to host antennas.

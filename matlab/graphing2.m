@@ -2,7 +2,11 @@ dp = dipole('Width',0.001, 'Length', 0.5);
 steer = 63;
 rb = uniformLinearArray(0.5, steer);
 Adb = patternAzimuth(rb, 3e8);
-Adb_180 = Adb(1:180);
+Adb_180 = Adb(1:181);
+
+A = 10.^(Adb_180/20);
+directivity = A(90-steer)/mean(A);
+disp(directivity)
 
 patternAzimuth(rb, 3e8, 0, 'Azimuth',0:1:180);
 
