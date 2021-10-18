@@ -1,10 +1,9 @@
 import numpy as np 
-from scipy.stats import norm
 from evolution import selection, fitness
 from functions import *
 
 class EvoPhase:
-    
+    #Initiate parameters
     def __init__(self, population_tot, crossover_rate, mutation_rate, generations, N, d, target):
         self.population_tot = population_tot
         self.crossover_rate = crossover_rate
@@ -13,62 +12,63 @@ class EvoPhase:
         self.N = N
         self.target = target
    
-        self.pop = np.ndarray(shape=(self.generations))
-        # Spacing between 
+        # Spacing between antennas 
         self.pop_dis = np.ndarray(shape=(self.population_tot, self.N-1))
        
-        # Phase Shift
+        # Phase Shift of the signal of each antenna element
         self.pop_pha = np.random.uniform(size = (self.population_tot, self.N), low = 0, high = 2*np.pi) # randians
         
+        # Amplitude of the signal of each antenna element. 
         self.pop_amp = np.ndarray(shape=(self.population_tot, self.N))
+        # Uinform amplitude
         amp = np.array([1, 1, 1, 1, 1, 1])
         
+        # Population with same spacing and amplitude -> Only optimizing phase
         for i in range(self.population_tot):
             self.pop_dis[i, :] = d
             self.pop_amp[i, :] = amp
             
-        # Fitness
+        # Fitness scores 
         self.pop_fit = np.zeros(self.population_tot, dtype = np.float)
         
         self.evolve()
     
     def results(self):
+        # Return the best solution
         q = np.argmin(self.pop_fit)
         return self.pop_pha[q]
-    
-    def getfittest(self):
-        return self.pop
         
     def evolve(self):
-        # probabilities for cross over. To avoid calculationg random numbers every itteration.
+        # probabilities for crossover. To avoid calculationg random numbers every itteration.
         crossovers = np.random.uniform(size=(self.generations), low = 0, high=1)
         mutations = np.random.uniform(size=(self.generations), low = 0, high=1)
         
         for i in range(self.generations):
             tot = 0
+            # Calculate the fitness score of each solution 
             for dna in range(self.population_tot):
                 score = fitness(self.pop_dis[dna], self.pop_pha[dna], self.pop_amp[dna], self.target)
                 self.pop_fit[dna] = score;
                 tot += score
-            
+            # Index of fittest solution
             index = np.argmin(self.pop_fit)
+            # Copy fitteset solution over to next genertation (first and last index of array)
             self.pop_pha[0] = self.pop_pha[index]
             self.pop_pha[-1] = self.pop_pha[index]
-            
-            tot = tot/self.population_tot
-            self.pop[i] = self.pop_fit[index]
              
+            # Stop simulating when the generation matches the maximun no of generations.   
             if i == self.generations-1:
                 print('DONE')
                 break
+            
+            # Itterations per generations
             for _ in range(1):
                 if crossovers[i] < self.crossover_rate:
-                    # crossover occurs
-                        s_1 = selection(self.pop_fit)
-                        s_2 = selection(self.pop_fit)
-                        self.pop_pha[s_1] = np.divide(self.pop_pha[s_1] + self.pop_pha[s_2],2)
-                        #self.pop_pha[s_1][3:5] = (self.pop_pha[s_1][3:5] + self.pop_pha[s_2][3:5])/2
-                        #self.pop_pha[s_2][0:2] = (self.pop_pha[s_1][0:2] + self.pop_pha[s_2][0:2])/2
+                    # crossover occurs (Two parent solutions)
+                    s_1 = selection(self.pop_fit)
+                    s_2 = selection(self.pop_fit)
+                    # Ofspring 
+                    self.pop_pha[s_1] = np.divide(self.pop_pha[s_1] + self.pop_pha[s_2],2)
 
                 if mutations[i] < self.mutation_rate:
                     # mutation occurs
@@ -84,17 +84,15 @@ if __name__ == '__main__':
     # ----
     #d = np.array([0.3,	0.475, 0.52, 0.475, 0.3]) 
     #d = np.array([0.425,	0.475,	0.5,	0.475, 0.425])
-    d = np.array([0.35,	0.48,	0.56,	0.48, 0.35])
-    #I = np.array([1, 1, 1, 1, 1, 1])
-    #I = np.array([1, 5, 10, 10, 5, 1])
-    I = np.array([0.32, 0.428, 0.54, 0.54, 0.428, 0.32])
-    #I = np.array([0.098726072,	0.311798111,	0.688052999,	0.805729944,	0.536837113,	0.171841348])
-    # 0.320600985	0.427582373	0.542381848	0,542381891	0,427582366	0,320600977
+    #d = np.array([0.35,	0.48,	0.56,	0.48, 0.35])
+    I = np.array([1, 1, 1, 1, 1, 1])
 
 
+    #d = np.array([0.3,	0.525,	0.5,	0.525, 0.525])
+    d = np.array([0.426, 0.444, 0.367, 0.442, 0.498])
 
 
-    target = 20
+    target = 37
     N = 6;
     # Constants
     
@@ -103,7 +101,7 @@ if __name__ == '__main__':
 
     # Spacing and Phase
     for i in range(sims):
-        evo = EvoPhase(5, 0.5, 1, 5000, N, d, target)
+        evo = EvoPhase(2, 0, 1, 5000, N, d, target)
         pha = evo.results()
         best_p[i] = pha
     
@@ -129,13 +127,13 @@ if __name__ == '__main__':
     print('sll', sll[q])
     
     from wexcel import *
-    date_file = 'final_results2.xlsx'
+    date_file = 'final_random.xlsx'
     
     save_data(best_p, date_file, 'pha')
-    # save_data(hpbw, date_file, 'hpbw')
+    save_data(hpbw, date_file, 'hpbw')
     save_data(sll, date_file, 'sll')
     save_data(sll2, date_file, 'sll2')
-    # save_data(directivity, date_file, 'dir')
+    save_data(directivity, date_file, 'dir')
     showUniform(target)
     show(d,  best_p[q],  I)
     

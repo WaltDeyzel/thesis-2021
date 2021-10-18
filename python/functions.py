@@ -44,7 +44,7 @@ def show(dd, alpha, I):
     theta_deg = np.linspace(0, 180, 180)
     f_ = 20*(np.log10(f_) -np.log10(np.max(f_)))
     plt.plot(theta_deg, f_)
-    plt.ylim([-30, 0])
+    plt.ylim([-60, 0])
     plt.title('AF')
     plt.xlabel("theta (degrees)")
     plt.ylabel("Normalized Magnitude")
@@ -135,3 +135,8 @@ def SLL2(dd, alpha, I):
 def getDirectivity(dd, alpha, I, target):
     f_ = AF(dd, alpha, I)
     return f_[target-1]/np.average(f_)
+
+def fitnessX(ddd, alpha, I, target, hpbw):
+    if HPBW(ddd, alpha, I) <= hpbw:
+        return SLL(ddd, alpha, I)
+    return 100
