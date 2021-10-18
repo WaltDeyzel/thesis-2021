@@ -17,11 +17,11 @@ y4 = [1 10 45 120 210 252 210 120 45 10 1];
 sig4 = [z y4 z];
 
 
-plot(y1/max(y1),'LineWidth',1)
+%plot(y1/max(y1),'LineWidth',1)
 hold on
-plot(y2/max(y2),'LineWidth',1)
-plot(y3/max(y3),'LineWidth',1)
-plot(y4/max(y4),'LineWidth',1)
+%plot(y2/max(y2),'LineWidth',1)
+%plot(y3/max(y3),'LineWidth',1)
+%plot(y4/max(y4),'LineWidth',1)
 
 
 %plot(abs(fftshift(fft(sig1)))/max(abs(fftshift(fft(sig1))) ))

@@ -29,9 +29,9 @@
 amp0 = [1 1 1 1 1 1 1 1 1 1 1];
 amp1 = [1.2587 2.1013  3.270 4.2912 4.8872 4.8872 4.2912 3.2707 2.1013 1.2587]/4.8872;
 amp2 = [1 9 36 84 126 126 84 36 9 1]/126;
+amp3 = [0.16145804 0.32647378 0.54452268 0.74505314 0.8648596  0.8648596 0.74505314 0.54452268 0.32647378 0.16145804];
 
-
-d = 5;
+d = 1;
 gcf = figure();
 hold on
 title('Amplitude Tapering ULA.', 'FontSize',17)
@@ -44,17 +44,21 @@ grid on
     
 resolution = length(radians);   
 space = AF(d, amp0);    
-%plot(180*(1:resolution)/resolution, 20*log10(abs(space))-max(20*log10(abs(space))),'LineWidth',1)
-%space = AF(d, amp1);    
-%plot(180*(1:resolution)/resolution,20*log10(abs(space))-max(20*log10(abs(space))),'LineWidth',1)
-%space = AF(d, amp2);    
-%plot(180*(1:resolution)/resolution, 20*log10(abs(space))-max(20*log10(abs(space))),'LineWidth',1)
-axis([0 180 -10 0 ])
-%legend({'U', 'D', 'B'}, 'FontSize', 14)
-%saveas(gcf,'AmpALL.emf')
+
+plot(180*(1:resolution)/resolution, 20*log10(abs(space))-max(20*log10(abs(space))),'LineWidth',1)
+space = AF(d, amp1);    
+plot(180*(1:resolution)/resolution,20*log10(abs(space))-max(20*log10(abs(space))),'LineWidth',1)
+space = AF(d, amp2);    
+plot(180*(1:resolution)/resolution, 20*log10(abs(space))-max(20*log10(abs(space))),'LineWidth',1)
+space = AF(d, amp3);    
+plot(180*(1:resolution)/resolution, 20*log10(abs(space))-max(20*log10(abs(space))),'LineWidth',1)
+axis([0 180 -50 0 ])
+legend({'Uniform', 'Dolph', 'Binomial', 'GA'}, 'FontSize', 14)
+saveas(gcf,'AmpALL.emf')
 %saveas(gcf,'AmpALL.jpg')
 h = chebwin(6);
 %stem(h)
+
 hold off
 N = 50;
 LAA = ones(1,N);
@@ -66,10 +70,10 @@ x = -200:0.001:200;
 s = sinc(x)+sinc(x+20)+sinc(x+40)+sinc(x+60)+sinc(x+80)+sinc(x+100);
 
 y = conv(LAA, s);
-plot(y)
+%plot(y)
 
 %plot(s)
-set(gca,'XTick',[], 'YTick', [])
+%set(gca,'XTick',[], 'YTick', [])
 
 %plot(linspace(10,20, 1000), sinc(linspace(-10,10, 1000)))
 % window
