@@ -1,7 +1,7 @@
 import numpy as np 
 from evolution import selection, fitness
 from functions import *
-
+import time
 class EvoPhase:
     #Initiate parameters
     def __init__(self, population_tot, crossover_rate, mutation_rate, generations, N, d, target):
@@ -30,14 +30,17 @@ class EvoPhase:
             
         # Fitness scores 
         self.pop_fit = np.zeros(self.population_tot, dtype = np.float)
-        
+        self.params = np.zeros(self.generations, dtype = np.float)
         self.evolve()
     
     def results(self):
         # Return the best solution
         q = np.argmin(self.pop_fit)
         return self.pop_pha[q]
-        
+    
+    def getParams(self):
+        return self.params
+
     def evolve(self):
         # probabilities for crossover. To avoid calculationg random numbers every itteration.
         crossovers = np.random.uniform(size=(self.generations), low = 0, high=1)
@@ -55,20 +58,24 @@ class EvoPhase:
             # Copy fitteset solution over to next genertation (first and last index of array)
             self.pop_pha[0] = self.pop_pha[index]
             self.pop_pha[-1] = self.pop_pha[index]
-             
+            self.params[i] = self.pop_fit[index]
             # Stop simulating when the generation matches the maximun no of generations.   
             if i == self.generations-1:
                 print('DONE')
                 break
             
             # Itterations per generations
-            for _ in range(1):
+            for _ in range(10):
                 if crossovers[i] < self.crossover_rate:
                     # crossover occurs (Two parent solutions)
                     s_1 = selection(self.pop_fit)
                     s_2 = selection(self.pop_fit)
                     # Ofspring 
-                    self.pop_pha[s_1] = np.divide(self.pop_pha[s_1] + self.pop_pha[s_2],2)
+                    A = 0.99
+                    if self.pop_fit[s_1] < self.pop_fit[s_2]:
+                        self.pop_pha[s_1]= self.pop_pha[s_1] * A + self.pop_pha[s_2] * (1-A)
+                    else:
+                        self.pop_pha[s_1] = self.pop_pha[s_1] * (1-A) + self.pop_pha[s_2] * A
 
                 if mutations[i] < self.mutation_rate:
                     # mutation occurs
@@ -89,23 +96,27 @@ if __name__ == '__main__':
 
 
     #d = np.array([0.3,	0.525,	0.5,	0.525, 0.525])
-    d = np.array([0.426, 0.444, 0.367, 0.442, 0.498])
+    d = np.array([0.5, 0.5, 0.5, 0.5, 0.5])
 
 
-    target = 37
+    target = 45
     N = 6;
     # Constants
-    
-    sims = 10
+    gens = 1000
+    sims = 3
     best_p = np.zeros((sims, N), dtype=float)
-
+    par = np.zeros((sims, gens), dtype=float)
     # Spacing and Phase
+    start = time.time()
+
     for i in range(sims):
-        evo = EvoPhase(2, 0, 1, 5000, N, d, target)
+        evo = EvoPhase(2, 0, 1, gens, N, d, target)
+        par[i] = evo.getParams()
         pha = evo.results()
         best_p[i] = pha
     
-        
+    finish = time.time()   
+    print('Time : ' , finish - start)
     # Recalculate all fitness scores
     fit = np.zeros((sims), dtype=float)
     hpbw = np.zeros((sims), dtype=float)
@@ -127,15 +138,20 @@ if __name__ == '__main__':
     print('sll', sll[q])
     
     from wexcel import *
-    date_file = 'final_random.xlsx'
+    date_file = 'param.xlsx'
     
-    save_data(best_p, date_file, 'pha')
-    save_data(hpbw, date_file, 'hpbw')
-    save_data(sll, date_file, 'sll')
-    save_data(sll2, date_file, 'sll2')
-    save_data(directivity, date_file, 'dir')
+    # save_data(best_p, date_file, 'pha')
+    # save_data(hpbw, date_file, 'hpbw')
+    # save_data(sll, date_file, 'sll')
+    # save_data(sll2, date_file, 'sll2')
+    # save_data(directivity, date_file, 'dir')
+    save_data(par.T, date_file, 'par')
+    
+    
     showUniform(target)
     show(d,  best_p[q],  I)
-    
     plt.show()
     print(best_p)
+    
+    plt.plot(par.T)
+    plt.show()
